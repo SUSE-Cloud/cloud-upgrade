@@ -22,7 +22,20 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   
 4. On **node2**, after **node1** is upgraded:
   
-   4.1. Stop and delete pacemaker resources, except of drbd and vip
+   4.1. Stop and delete pacemaker resources, except of drbd and vip:
+   ```
+   for type in clone group ms primitive; do
+     for resource in $(crm configure show | awk "\$1 == \"$type\" && ! (\$2 ~ /drbd|stonith|vip-/) {print \$2}"); do
+       crm --wait resource stop $resource
+     done
+   done
+   for type in clone group ms primitive; do
+     for resource in $(crm configure show | awk "\$1 == \"$type\" && ! (\$2 ~ /drbd|stonith|vip-/) {print \$2}"); do
+       crm configure delete $resource
+     done
+   done
+   ```
+
    
 5. On **node1**, run full chef-client with adapted recipes, so
 
