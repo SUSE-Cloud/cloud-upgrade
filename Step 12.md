@@ -41,4 +41,5 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 
   * waiting for sync marks is skipped (see proposal https://github.com/crowbar/crowbar-ha/pull/146)
   * when creating new pacemaker resources (in the same transaction for each resource) add a special location constraint that prevents starting those resources on non-upgraded node(s)
-  * manually promote DRBD on this node to master
+  
+6. Manually promote DRBD on **node1** to master
