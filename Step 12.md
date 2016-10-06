@@ -46,6 +46,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   5.2 Create a location constraint that does not allow starting service on the node that is has the *pre-upgrade* role
    * Use similar code as in https://github.com/crowbar/crowbar-openstack/blob/master/chef/cookbooks/crowbar-openstack/libraries/ha_helpers.rb , but place it to crowbar-ha instead
    * Use ``pre-upgrade eq false`` condition for indicating that only nodes that already passed pre-upgrade state should start the service
+   * See https://github.com/crowbar/crowbar-ha/pull/149
   
   5.3. Create a definition *upgraded_only_location_for*
    * similar to *openstack_pacemaker_controller_only_location_for* from https://github.com/crowbar/crowbar-openstack/blob/master/chef/cookbooks/crowbar-openstack/definitions/openstack_pacemaker_controller_only_location_for.rb
