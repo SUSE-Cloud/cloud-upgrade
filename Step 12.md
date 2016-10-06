@@ -41,7 +41,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   5.1 Create the *pre-upgrade* role (technically, it's pacemaker node's attribute) and assign it to all controller nodes that are not upgraded yet (**node2**)
    * Use similar code as in https://github.com/crowbar/crowbar-openstack/blob/master/crowbar_framework/lib/openstack/ha.rb#L19
    * We could do this probably already during Cloud6 time
-   * Or directly via ``$node crm node attribute ...``, see https://github.com/crowbar/crowbar-core/pull/702
+   * Or directly via ``crm node attribute ...``, see https://github.com/crowbar/crowbar-core/pull/702
   
   5.2 Create a location constraint that does not allow starting service on the node that is has the *pre-upgrade* role
    * Use similar code as in https://github.com/crowbar/crowbar-openstack/blob/master/chef/cookbooks/crowbar-openstack/libraries/ha_helpers.rb , but place it to crowbar-ha instead
