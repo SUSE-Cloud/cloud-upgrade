@@ -36,7 +36,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
    done
    ```
 
-5. Upgrade related pacemaker magic
+5. Upgrade related pacemaker location constraint
 
   5.1 Create the *pre-upgrade* role (technically, it's pacemaker node's attribute) and assign it to all controller nodes that are not upgraded yet (**node2**)
    * Use similar code as in https://github.com/crowbar/crowbar-openstack/blob/master/crowbar_framework/lib/openstack/ha.rb#L19
@@ -59,13 +59,23 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     upgrade_location_name = upgraded_only_location_for clone_name
     transaction_objects << "pacemaker_location[#{upgrade_location_name}]" if CrowbarPacemakerHelper.being_upgraded?(node)
    ```
-6. Explicitly mark **node1** as the cluster founder
-  * Remove the founder attribute from **node2** if it is there
-  * (pacemaker starts the services on the founder nodes)
+6. Remove "pre-upgrade" attribute from **node1** 
 
-7. On **node1**, run full chef-client with adapted recipes, so
+  * So the location constraint does not apply for upgraded node
+  
+7. Cluster founder settings
+
+  7.1. Explicitly mark **node1** as the cluster founder
+  
+  7.2. Also remove the founder attribute from **node2** if it is there
+    * This is needed because pacemaker starts the services on the founder nodes
+    
+  7.3. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
+
+8. On **node1**, run full chef-client with adapted recipes, so
 
   * waiting for sync marks is skipped (see proposal https://github.com/crowbar/crowbar-ha/pull/146)
   * when creating new pacemaker resources the services are started on upgraded nodes only (see point **5** how to achieve that)
   
-8. Manually promote DRBD on **node1** to master
+9. Manually promote DRBD on **node1** to master
+ * Should not be needed after the actions from 7.3.
