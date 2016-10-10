@@ -59,10 +59,13 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     upgrade_location_name = upgraded_only_location_for clone_name
     transaction_objects << "pacemaker_location[#{upgrade_location_name}]" if CrowbarPacemakerHelper.being_upgraded?(node)
    ```
-   
-6. On **node1**, run full chef-client with adapted recipes, so
+6. Explicitly mark **node1** as the cluster founder
+  * Remove the founder attribute from **node2** if it is there
+  * (pacemaker starts the services on the founder nodes)
+
+7. On **node1**, run full chef-client with adapted recipes, so
 
   * waiting for sync marks is skipped (see proposal https://github.com/crowbar/crowbar-ha/pull/146)
   * when creating new pacemaker resources the services are started on upgraded nodes only (see point **5** how to achieve that)
   
-7. Manually promote DRBD on **node1** to master
+8. Manually promote DRBD on **node1** to master
