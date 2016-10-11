@@ -29,12 +29,13 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
        crm --wait resource stop $resource
      done
    done
-   for type in clone group ms primitive; do
+   for type in location clone group ms primitive; do
      for resource in $(crm configure show | awk "\$1 == \"$type\" && ! (\$2 ~ /drbd|stonith|vip-/) {print \$2}"); do
        crm configure delete $resource
      done
    done
    ```
+   **FIXME** ensure that deleting locations this way is correct
 
 5. Upgrade related pacemaker location constraint
 
