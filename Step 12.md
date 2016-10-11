@@ -71,11 +71,16 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     * This is needed because pacemaker starts the services on the founder nodes
     
   7.3. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
+  
+8. DRBD upgrade
 
-8. On **node1**, run full chef-client with adapted recipes, so
+ *  recreate metadata of drbd in standby node. "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
+
+9. On **node1**, run full chef-client with adapted recipes, so
 
   * waiting for sync marks is skipped (see proposal https://github.com/crowbar/crowbar-ha/pull/146)
   * when creating new pacemaker resources the services are started on upgraded nodes only (see point **5** how to achieve that)
   
-9. Manually promote DRBD on **node1** to master
- * Should not be needed after the actions from 7.3.
+~~10. Manually promote DRBD on **node1** to master~~
+
+ ~~* Should not be needed after the actions from 7.3.~~
