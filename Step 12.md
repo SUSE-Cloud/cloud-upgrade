@@ -72,6 +72,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     * This is needed because pacemaker starts the services on the founder nodes
     
   7.3. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
+    * **FIXME** This might not be needed if we call `drbdadm create-md all` explicitely (see next step)
   
 8. DRBD upgrade
 
