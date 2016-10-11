@@ -74,7 +74,8 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   
 8. DRBD upgrade
 
- *  recreate metadata of drbd in standby node. "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
+ * recreate metadata of drbd in standby node. "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
+ * currently DRBD service is restarted right after each resource is upgraded (see https://github.com/crowbar/crowbar-ha/blob/master/chef/cookbooks/drbd/providers/resource.rb#L66) but that keeps it in inconsistent state when postgresql resource metadata are up-to-date, while it is still old for rabbitmq)
 
 9. On **node1**, run full chef-client with adapted recipes, so
 
