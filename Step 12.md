@@ -22,7 +22,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   
 4. On **node2**, after **node1** is upgraded:
   
-   4.1. Stop and delete pacemaker resources, except of drbd and vip:
+   * Stop and delete pacemaker resources, except of drbd and vip:
    ```
    for type in clone group ms primitive; do
      for resource in $(crm configure show | awk "\$1 == \"$type\" && ! (\$2 ~ /drbd|stonith|vip-/) {print \$2}"); do
@@ -35,7 +35,9 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
      done
    done
    ```
-   **FIXME** ensure that deleting locations this way is correct
+   * **FIXME** ensure that deleting locations this way is correct
+   
+   * See https://github.com/crowbar/crowbar-core/pull/716
 
 5. Upgrade related pacemaker location constraint
 
@@ -60,9 +62,12 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     upgrade_location_name = upgraded_only_location_for clone_name
     transaction_objects << "pacemaker_location[#{upgrade_location_name}]" if CrowbarPacemakerHelper.being_upgraded?(node)
    ```
+   * See https://github.com/crowbar/crowbar-openstack/pull/545
+   
 6. Remove "pre-upgrade" attribute from **node1** 
 
   * So the location constraint does not apply for upgraded node
+  * **TODO** PR
   
 7. Cluster founder settings
 
@@ -72,7 +77,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     * This is needed because pacemaker starts the services on the founder nodes
     
   7.3. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
-    * **FIXME** This might not be needed if we call `drbdadm create-md all` explicitely (see next step)
+    * **FIXME** This might not be needed if we call `drbdadm create-md all` explicitely (see next step) ... ?
   
 8. DRBD upgrade
 
