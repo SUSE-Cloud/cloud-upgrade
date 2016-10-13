@@ -90,3 +90,6 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   * when creating new pacemaker resources the services are started on upgraded nodes only (see point **5** how to achieve that)
   
 10. Manually promote DRBD on **node1** to master
+  * This might not be needed. Once we cleanly shutdown **node2**, promotion should happen automatically.
+  
+11. Wait until **node1** is ready. Proceed with **node2**
