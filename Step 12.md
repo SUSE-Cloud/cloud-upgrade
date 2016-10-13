@@ -67,7 +67,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 6. Remove "pre-upgrade" attribute from **node1** 
 
   * So the location constraint does not apply for upgraded node
-  * **TODO** PR
+  * https://github.com/crowbar/crowbar-core/pull/725
   
 7. Cluster founder settings
 
