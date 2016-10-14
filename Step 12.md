@@ -72,11 +72,11 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 7. Cluster founder settings
 
   7.1. Explicitly mark **node1** as the cluster founder
-  
-  7.2. Also remove the founder attribute from **node2** if it is there
+    * Also remove the founder attribute from **node2** if it is there
     * This is needed because pacemaker starts the services on the founder nodes
+    * PR: https://github.com/crowbar/crowbar-ha/pull/152 - note that the method is not yet called from anywhere
     
-  7.3. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
+  7.2. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
     * **FIXME** This might not be needed if we call `drbdadm create-md all` explicitely (see next step) ... ?
   
 8. DRBD upgrade
