@@ -35,7 +35,8 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
      done
    done
    ```
-   * **FIXME** ensure that deleting locations this way is correct
+   * **FIXME** keystone does not want to die
+   * neutron-agents - can be deleted as well (they will be started there though)
    
    * See https://github.com/crowbar/crowbar-core/pull/716
 
@@ -49,10 +50,17 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   5.2 Create a location constraint that does not allow starting service on the node that is has the *pre-upgrade* role
    * See https://github.com/crowbar/crowbar-openstack/pull/562 (merged)
    
+  5.3. **TODO** location constraint for neutron-agents must allow running it anywhere (on both nodes)
+   
 6. Remove "pre-upgrade" attribute from **node1** 
 
   * So the location constraint does not apply for upgraded node
-  * https://github.com/crowbar/crowbar-core/pull/725
+  
+    * See https://github.com/crowbar/crowbar-core/pull/725
+    * **FIXME** PR above keeps setting this when chef-client is run again !!!
+    
+  * When could we do it and from where? Probably from the **node2**, which still has pacemaker running
+  
   
 7. Cluster founder settings
 
@@ -61,20 +69,35 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     * This is needed because pacemaker starts the services on the founder nodes
     * PR: https://github.com/crowbar/crowbar-ha/pull/152 - note that the method is not yet called from anywhere
     
-  7.2. Set ``node['drbd']['rsc']['postgresql']['configured']`` to ``false``, otherwise drbd recipe will notice inconsistency and complain.
-    * **FIXME** This might not be needed if we call `drbdadm create-md all` explicitely (see next step) ... ?
+  7.2. Set ``node['drbd']['rsc']['postgresql']['master']`` to ``true`` for **node1** AND ``false`` for **node2**, otherwise drbd recipe will notice inconsistency and complain.
+   
+    * **FIXME** This is only to fool drbd resource code so it does not execute the initial code for DRBD
   
 8. DRBD upgrade
 
  * recreate metadata of drbd in standby node. "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
  * currently DRBD service is restarted right after each resource is upgraded (see https://github.com/crowbar/crowbar-ha/blob/master/chef/cookbooks/drbd/providers/resource.rb#L66) but that keeps it in inconsistent state when postgresql resource metadata are up-to-date, while it is still old for rabbitmq)
 
-9. On **node1**, run full chef-client with adapted recipes, so
+9. On **node1**, start pacemaker, so
+
+  * DRBD is started and synced with **node2**. **FIXME** currently this only works after **second** run of `create-md` !!
+
+10. On **node1**, start crowbar-join that runs chef-client and moves the node to **ready** state
 
   * waiting for sync marks is skipped (see proposal https://github.com/crowbar/crowbar-ha/pull/146)
   * when creating new pacemaker resources the services are started on upgraded nodes only (see point **5** how to achieve that)
+  * only neutron-agents are started on both nodes
   
-10. Manually promote DRBD on **node1** to master
-  * This might not be needed. Once we cleanly shutdown **node2**, promotion should happen automatically.
+11. Manually promote DRBD on **node1** to master
+  * This should not be needed. Once we cleanly shutdown **node2**, promotion should happen automatically.
   
-11. Wait until **node1** is ready. Proceed with **node2**
+12. Wait until **node1** is ready. Proceed with **node2**
+
+13. Execute pre-upgrade script at **node2** so
+  * neutron routers are migrated off this node
+  * pacemaker is stopped
+  
+14. Apply new location constrain to neutron-agents, that ensures it is only run on upgraded node(s)
+
+15. Upgrade and reboot **node2**
+  
