@@ -42,27 +42,12 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 5. Upgrade related pacemaker location constraint
 
   5.1 Create the *pre-upgrade* role (technically, it's pacemaker node's attribute) and assign it to all controller nodes that are not upgraded yet (**node2**)
-   * Use similar code as in https://github.com/crowbar/crowbar-openstack/blob/master/crowbar_framework/lib/openstack/ha.rb#L19
+
    * We could do this probably already during Cloud6 time
-   * Or directly via ``crm node attribute ...``, see https://github.com/crowbar/crowbar-core/pull/702
+   * Or directly via ``crm node attribute ...``, see https://github.com/crowbar/crowbar-core/pull/702 (merged)
   
   5.2 Create a location constraint that does not allow starting service on the node that is has the *pre-upgrade* role
-   * Use similar code as in https://github.com/crowbar/crowbar-openstack/blob/master/chef/cookbooks/crowbar-openstack/libraries/ha_helpers.rb , but place it to crowbar-ha instead
-   * Use ``pre-upgrade eq false`` condition for indicating that only nodes that already passed pre-upgrade state should start the service
-   * See https://github.com/crowbar/crowbar-ha/pull/149
-  
-  5.3. Create a definition *upgraded_only_location_for*
-   * similar to *openstack_pacemaker_controller_only_location_for* from https://github.com/crowbar/crowbar-openstack/blob/master/chef/cookbooks/crowbar-openstack/definitions/openstack_pacemaker_controller_only_location_for.rb
-   * This is optional, so the following step adds less code to normal (not upgrade related) recipes
-  
-  5.4. Update ha related OpenStack recipes to add a new location to the same transaction with creation "normal" services.
-   * Something like:
-  
-   ```
-    upgrade_location_name = upgraded_only_location_for clone_name
-    transaction_objects << "pacemaker_location[#{upgrade_location_name}]" if CrowbarPacemakerHelper.being_upgraded?(node)
-   ```
-   * See https://github.com/crowbar/crowbar-openstack/pull/545
+   * See https://github.com/crowbar/crowbar-openstack/pull/562 (merged)
    
 6. Remove "pre-upgrade" attribute from **node1** 
 
