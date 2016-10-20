@@ -51,6 +51,8 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
    * See https://github.com/crowbar/crowbar-openstack/pull/562 (merged)
    
   5.3. **TODO** location constraint for neutron-agents must allow running it anywhere (on both nodes)
+  
+  5.4. **FIXME** Do not put this location constraint to `l-ms-drbd-postgresql-controller` and `l-ms-drbd-rabbitmq-controller` (see `postgresql/recipes/ha_storage.rb` and `rabbitmq/recipes/ha.rb`)
    
 6. Remove "pre-upgrade" attribute from **node1** 
 
