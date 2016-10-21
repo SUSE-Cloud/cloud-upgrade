@@ -80,6 +80,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 
  * recreate metadata of drbd in standby node. "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
  * currently DRBD service is restarted right after each resource is upgraded (see https://github.com/crowbar/crowbar-ha/blob/master/chef/cookbooks/drbd/providers/resource.rb#L66) but that keeps it in inconsistent state when postgresql resource metadata are up-to-date, while it is still old for rabbitmq)
+ * This does not work 100% yet, see https://bugzilla.suse.com/show_bug.cgi?id=1006105
 
 9. On **node1**, start pacemaker, so
 
