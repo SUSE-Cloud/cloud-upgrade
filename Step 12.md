@@ -23,20 +23,10 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 4. On **node2**, after **node1** is upgraded:
   
    * Stop and delete pacemaker resources, except of drbd and vip:
-   ```
-   for type in clone group ms primitive; do
-     for resource in $(crm configure show | awk "\$1 == \"$type\" && ! (\$2 ~ /drbd|stonith|vip-/) {print \$2}"); do
-       crm --wait resource stop $resource
-     done
-   done
-   for type in location clone group ms primitive; do
-     for resource in $(crm configure show | awk "\$1 == \"$type\" && ! (\$2 ~ /drbd|stonith|vip-/) {print \$2}"); do
-       crm configure delete $resource
-     done
-   done
-   ```
+
    * **FIXME** keystone does not want to die
-   * neutron-agents - can be deleted as well (they will be started there though)
+   
+   * neutron-agents: can be deleted as well (they will be started there though)
    
    * See https://github.com/crowbar/crowbar-core/pull/716
 
@@ -46,21 +36,24 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 
    * We could do this probably already during Cloud6 time
    * Or directly via ``crm node attribute ...``, see https://github.com/crowbar/crowbar-core/pull/702 (merged)
+   * Fixed in https://github.com/crowbar/crowbar-core/pull/749
   
   5.2 Create a location constraint that does not allow starting service on the node that is has the *pre-upgrade* role
    * See https://github.com/crowbar/crowbar-openstack/pull/562 (merged)
-   
-  5.3. **TODO** location constraint for neutron-agents must allow running it anywhere (on both nodes)
+     
+  5.3. Do not put this location constraint to `neutron-agents`, `ms-drbd-postgresql-controller` and `ms-drbd-rabbitmq-controller` (see `postgresql/recipes/ha_storage.rb` and `rabbitmq/recipes/ha.rb`)
   
-  5.4. **FIXME** Do not put this location constraint to `l-ms-drbd-postgresql-controller` and `l-ms-drbd-rabbitmq-controller` (see `postgresql/recipes/ha_storage.rb` and `rabbitmq/recipes/ha.rb`)
    * See https://github.com/crowbar/crowbar-openstack/pull/567
+   
+  5.4. **TODO** Figure out how to handle neutron-agents correctly
+   * They need to run at both nodes when upgradeing **node1**
+   * They need to move to **node1** before we start upgrading **node2**
    
 6. Remove "pre-upgrade" attribute from **node1** 
 
   * So the location constraint does not apply for upgraded node
   
     * See https://github.com/crowbar/crowbar-core/pull/725
-    * **FIXME** PR above keeps setting this when chef-client is run again !!!
     
   * When could we do it and from where? Probably from the **node2**, which still has pacemaker running
   
