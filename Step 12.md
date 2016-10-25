@@ -46,9 +46,16 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
    * See https://github.com/crowbar/crowbar-openstack/pull/567
    
   5.4. **TODO** Figure out how to handle neutron-agents correctly
-   * They need to run at both nodes when upgradeing **node1**
-   * They need to move to **node1** before we start upgrading **node2**
    
+    5.4.1. We need to allow starting `neutron-agents` on **node2** so they have access to routers that are present there.
+   
+    5.4.2. We need to migrate routers again from non-upgraded node to **node1** once all services are running with new configuration at **node1**
+   
+    This could be achieved by not adding any constraint to `neutron-agents` resource. First chef-client on **node1** would start `nutron-agents` on both nodes. But:
+   
+    5.4.3. Once we upgrade **node2**, we can't allow starting neutron-agents there, before the configuration is updated, i.e. before the chef-client run on **node2** is finished. So it looks like for this time, we need a constraint that allows `neutron-agents` to be running at upgraded nodes only.
+   
+  
 6. Remove "pre-upgrade" attribute from **node1** 
 
   * So the location constraint does not apply for upgraded node
