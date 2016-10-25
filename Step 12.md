@@ -74,7 +74,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
     
   7.2. Set ``node['drbd']['rsc']['postgresql']['master']`` to ``true`` for **node1** AND ``false`` for **node2**, otherwise drbd recipe will notice inconsistency and complain.
    
-    * **FIXME** This is only to fool drbd resource code so it does not execute the initial code for DRBD
+    * See https://github.com/crowbar/crowbar-ha/pull/155
   
 8. DRBD upgrade
 
