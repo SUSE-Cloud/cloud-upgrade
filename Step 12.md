@@ -78,13 +78,14 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   
 8. DRBD upgrade
 
- * recreate metadata of drbd in standby node. "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
- * currently DRBD service is restarted right after each resource is upgraded (see https://github.com/crowbar/crowbar-ha/blob/master/chef/cookbooks/drbd/providers/resource.rb#L66) but that keeps it in inconsistent state when postgresql resource metadata are up-to-date, while it is still old for rabbitmq)
- * This does not work 100% yet, see https://bugzilla.suse.com/show_bug.cgi?id=1006105
+  * recreate metadata of drbd at **node1** using "drbdadm create-md all", you can use "-- --force" to skipping input  "yes"
+  * This has to be done explicitely from script. We cannot do it from chef resource, because DRBD service is restarted right after each resource is upgraded (see https://github.com/crowbar/crowbar-ha/blob/master/chef/cookbooks/drbd/providers/resource.rb#L66) but that keeps it in inconsistent state when postgresql resource metadata are up-to-date, while it is still old for rabbitmq)
+ 
+9. On **node1**, start pacemaker
 
-9. On **node1**, start pacemaker, so
-
-  * DRBD is started and synced with **node2**. **FIXME** currently this only works after **second** run of `create-md` !!
+  * so pacemaker starts DRBD synchronizes it with **node2**.
+  * **FIXME** currently this only works after **second** run of `create-md` see  https://bugzilla.suse.com/show_bug.cgi?id=1006105
+  * Wait until DRBD is correctly synchronized
 
 10. On **node1**, start crowbar-join that runs chef-client and moves the node to **ready** state
 
