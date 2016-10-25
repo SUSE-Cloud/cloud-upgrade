@@ -8,7 +8,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
   
 2. Select the first node to upgrade
   * Pick DRBD slave
-  * Let's assume we have 2 nodes, first node is **node1**, remaining one is **node2**
+  * Let's assume we have 2 nodes, first node to upgrade (= DRBD slave) is **node1**, remaining one is **node2**
 
 3. On **node1**:
 
