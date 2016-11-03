@@ -100,9 +100,11 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 
 13. Execute pre-upgrade script at **node2** so
   * neutron routers are migrated off this node
+   
+    **FIXME** 
+    How should we do it? See https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7 lines 284-287
+    
   * pacemaker is stopped
   
-14. Apply new location constrain to neutron-agents, that ensures it is only run on upgraded node(s)
-
-15. Upgrade and reboot **node2**
+14. Upgrade and reboot **node2**
   
