@@ -90,8 +90,7 @@ Short version of https://etherpad.nue.suse.com/p/cloud-upgrade-6-to-7
 
   * waiting for sync marks is skipped (see ~~https://github.com/crowbar/crowbar-ha/pull/146~~)
   * when creating new pacemaker resources the services are started on upgraded nodes only (see point **5** how to achieve that)
-  * only neutron-agents are started on both nodes
-  
+ 
 11. Manually promote DRBD on **node1** to master
   * This should not be needed. Once we cleanly shutdown **node2**, promotion should happen automatically.
   
